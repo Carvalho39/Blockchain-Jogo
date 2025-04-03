@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Multiplayer</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .block {
+            border: 2px solid black;
+            padding: 10px;
+            margin: 10px auto;
+            width: 300px;
+            background-color: #0d6efd;
+            color: white;
+        }
+        button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0b5ed7;
+        }
+    </style>
+</head>
+<body>
+    <h1>Blockchain Multiplayer</h1>
+    <p>Clique para adicionar um bloco à blockchain global!</p>
+    <button onclick="addBlock()">Adicionar Bloco</button>
+    <div id="blockchain"></div>
+    <p id="explanation"></p>
+
+    <script>
+        const socket = io("http://localhost:3000");
+
+        function addBlock() {
+            socket.emit("novo_bloco");
+        }
+
+        socket.on("atualizar_blockchain", (blockchain) => {
+            document.getElementById("blockchain").innerHTML = "";
+            blockchain.forEach(block => {
+                let blockDiv = document.createElement("div");
+                blockDiv.className = "block";
+                blockDiv.innerHTML = `<strong>Bloco ${block.index}</strong><br>Hash Anterior: ${block.previousHash}<br>Hash: ${block.hash}`;
+                document.getElementById("blockchain").appendChild(blockDiv);
+            });
+        });
+    </script>
+</body>
+</html>
